@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 import javax.ws.rs.HttpMethod;
 
 /**
- * Indicates that the annotated method responds to HTTP PATCH requests
- * @see HttpMethod
+ * @author manishs
+ * Annotation to specify PATCH method support.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

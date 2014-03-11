@@ -2,6 +2,10 @@ package com.smanish.rest.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author manishs
+ * Simple POJO class.
+ */
 @XmlRootElement
 public class Track {
 

@@ -1,8 +1,12 @@
 package com.smanish.rest.http.methodsImpl;
 
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 
-public class PatchMethod extends PostMethod{
+/**
+ * @author manishs
+ * Class which inherits from Http PostMethod class.
+ */
+public class PatchMethod extends PutMethod{
 
 	public PatchMethod(String url){
 		super(url);

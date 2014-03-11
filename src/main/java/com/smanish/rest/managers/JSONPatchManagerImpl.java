@@ -14,41 +14,50 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.smanish.rest.constants.ServiceConstants;
+import com.smanish.rest.constants.PatchManagerConstants;
 import com.smanish.rest.model.Track;
 
 /**
  * @author manishs
  * 
- * Class for applying json patch to the system objects.
+ * Class responsible for applying json patch to the system objects.
  *
  */
 public class JSONPatchManagerImpl implements JSONPatchManager{
 
+	private static final String FILE_PATH = "d:\\user.json";
+
+	/* (non-Javadoc)
+	 * @see com.smanish.rest.managers.JSONPatchManager#applyPatch(com.smanish.rest.model.Track, org.codehaus.jettison.json.JSONObject)
+	 */
 	@Override
-	public Track applyPatch(Track site,
+	public Track applyPatch(Track track,
 			JSONObject patchObject)
-			throws JSONException {
-		ObjectMapper siteToJsonmapper = new ObjectMapper();
+					throws JSONException {
+		ObjectMapper pojoToJsonmapper = new ObjectMapper();
 		JSONArray opArray = new JSONArray("["+patchObject.toString()+"]");
 		Track updatedSite = null;
+		File file = null;
 		try {
-			siteToJsonmapper.writeValue(new File("d:\\user.json"), site);
+			file  = new File(FILE_PATH);
+			pojoToJsonmapper.writeValue(file, track);
 			BufferedReader fileReader = new BufferedReader(
-					new FileReader("d:\\user.json"));
-			JsonNode rootNode = siteToJsonmapper.readTree(fileReader);
-			for(int jsonCounter = 0; jsonCounter < opArray.length(); jsonCounter++){
-				String operation = opArray.getJSONObject(jsonCounter).getString(ServiceConstants.OP);
-				String path = opArray.getJSONObject(jsonCounter).getString(ServiceConstants.PATH);
-				if (ServiceConstants.REPLACE.equals(operation)) {
-					((ObjectNode)rootNode).put(path, opArray.getJSONObject(jsonCounter).getString(ServiceConstants.VALUE));
+					new FileReader(FILE_PATH));
+			JsonNode rootNode = pojoToJsonmapper.readTree(fileReader);
+			for(int jsonObjCounter = 0; jsonObjCounter < opArray.length(); jsonObjCounter++){
+				String operation = opArray.getJSONObject(jsonObjCounter).getString(PatchManagerConstants.OP);
+				String path = opArray.getJSONObject(jsonObjCounter).getString(PatchManagerConstants.PATH);
+				if (PatchManagerConstants.REPLACE.equals(operation)) {
+					((ObjectNode)rootNode).put(path, opArray.getJSONObject(jsonObjCounter).getString(PatchManagerConstants.VALUE));
 
-				} else if (ServiceConstants.REMOVE.equals(operation)) {
+				} else if (PatchManagerConstants.REMOVE.equals(operation)) {
 					((ObjectNode)rootNode).putNull(path);
 				}
 			}
-			updatedSite = siteToJsonmapper.readValue(rootNode, Track.class);
-			
+			updatedSite = pojoToJsonmapper.readValue(rootNode, Track.class);
+			if(file != null){
+				file.delete();
+			}
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -56,7 +65,6 @@ public class JSONPatchManagerImpl implements JSONPatchManager{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return updatedSite;
 	}
 
