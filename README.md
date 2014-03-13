@@ -1,4 +1,4 @@
-RestServicesR-D
+JerseyHttpPatch
 ===============
 
 Experiments related to Rest services and HTTP method verb implementations for them.
